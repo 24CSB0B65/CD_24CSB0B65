@@ -1,0 +1,5 @@
+snippet_id,variable_name,var_decl_count,var_use_count,total_statements,total_variables,cfg_depth,cfg_nodes,side_effect_count,usage_ratio,label
+1,a,1,1,5,4,4,5,0,0.5000,LIVE
+1,b,1,0,5,4,4,5,0,0.5000,DEAD
+1,c,1,0,5,4,4,5,0,0.5000,DEAD
+1,d,1,1,5,4,4,5,0,0.5000,LIVE
