@@ -1,0 +1,20 @@
+AST
+PROGRAM
+  DECL
+    TYPE (int)
+    IDENTIFIER (a)
+    VALUE (10)
+  DECL
+    TYPE (int)
+    IDENTIFIER (b)
+    VALUE (5)
+  DECL
+    TYPE (int)
+    IDENTIFIER (c)
+    VALUE (8)
+  DECL
+    TYPE (int)
+    IDENTIFIER (d)
+    IDENTIFIER (a)
+  RETURN
+    IDENTIFIER (d)
