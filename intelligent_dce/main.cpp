@@ -12,7 +12,18 @@
 //   8.  Features  → CodeFeatures struct          (Week 9)
 //   9.  Dataset   → labeled CSV rows             (Week 10)
 // =======================================================================
+/*int main() {
+    int a = 10;
+    int b = 20;
+    int c = a ;  
 
+    int d = 50;      
+    int e = c ;   
+
+    int f = 100;     
+
+    return e;
+}*/
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -114,8 +125,7 @@ int main()
     cout << "WEEK 10: DATASET PREPARATION\n";
     cout << "========================================\n";
 
-    // Use the ORIGINAL stmts (before DCE) so dead variables are included
-    // as negative (DEAD) samples — we need both classes for ML training
+    
     vector<ASTNode*> allStmts = root->children;   // already optimized here;
     // reload original AST for full dataset
     ASTNode* origRoot = buildAST(tokens);

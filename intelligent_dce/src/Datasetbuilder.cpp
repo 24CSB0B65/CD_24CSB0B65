@@ -8,6 +8,10 @@
 //      label "LIVE" or "DEAD" based on the live set
 //   4. Validate: re-run liveness and confirm labels match
 //   5. Save to CSV for ML training
+//
+// FOR loops are fully handled: the loop variable is collected via the
+// recursive collectDeclVars helper, and runLiveness iterates the loop
+// body until the live-set stabilises (models the back-edge).
 // =======================================================================
 
 #include "DatasetBuilder.h"
@@ -20,32 +24,94 @@
 using namespace std;
 
 // -----------------------------------------------------------------------
-// INTERNAL: run classical liveness analysis, return live set
-// (mirrors Analysis.cpp logic — self-contained so no global state used)
+// INTERNAL helpers
 // -----------------------------------------------------------------------
+
+// Forward declaration
+static void runLivenessHelper(vector<ASTNode*>& stmts, set<string>& live);
+
+static void runLivenessHelper(vector<ASTNode*>& stmts, set<string>& live)
+{
+    for (int i = (int)stmts.size() - 1; i >= 0; i--)
+    {
+        ASTNode* stmt = stmts[i];
+
+        if (stmt->type == "RETURN")
+        {
+            live.insert(stmt->children[0]->value);
+        }
+        else if (stmt->type == "DECL")
+        {
+            string defined = stmt->children[1]->value;
+            if (live.count(defined))
+            {
+                ASTNode* rhs = stmt->children[2];
+                if (rhs->type == "IDENTIFIER")
+                    live.insert(rhs->value);
+            }
+        }
+        else if (stmt->type == "FOR")
+        {
+            ASTNode* initDecl   = stmt->children[0];
+            ASTNode* condNode   = stmt->children[1];
+            ASTNode* updateNode = stmt->children[2];
+            ASTNode* bodyNode   = stmt->children[3];
+
+            // Iterate body until live-set stabilises (back-edge model)
+            set<string> prev;
+            do {
+                prev = live;
+                runLivenessHelper(bodyNode->children, live);
+            } while (live != prev);
+
+            // Condition operands
+            if (!condNode->children.empty())
+            {
+                live.insert(condNode->children[0]->value);
+                if ((int)condNode->children.size() > 1 &&
+                    condNode->children[1]->type == "IDENTIFIER")
+                    live.insert(condNode->children[1]->value);
+            }
+
+            // Update uses the loop variable
+            if (!updateNode->children.empty())
+                live.insert(updateNode->children[0]->value);
+
+            // Init RHS
+            if ((int)initDecl->children.size() > 2 &&
+                initDecl->children[2]->type == "IDENTIFIER")
+                live.insert(initDecl->children[2]->value);
+        }
+    }
+}
+
+// Run classical liveness analysis; returns the live set.
 static set<string> runLiveness(vector<ASTNode*> stmts)
 {
     set<string> live;
+    runLivenessHelper(stmts, live);
+    return live;
+}
 
-    for (int i = (int)stmts.size() - 1; i >= 0; i--)
+// Collect all declared variable names (DECL statements + FOR init),
+// recursing into FOR bodies.
+static void collectDeclVars(const vector<ASTNode*>& stmts,
+                             vector<ASTNode*>&        out)
+{
+    for (ASTNode* stmt : stmts)
     {
-        if (stmts[i]->type == "RETURN")
+        if (stmt->type == "DECL")
         {
-            live.insert(stmts[i]->children[0]->value);
+            out.push_back(stmt);
         }
-        else if (stmts[i]->type == "DECL")
+        else if (stmt->type == "FOR")
         {
-            string defined = stmts[i]->children[1]->value;
-            if (live.count(defined))
-            {
-                ASTNode* rhs = stmts[i]->children[2];
-                if (rhs->type == "IDENTIFIER")
-                    live.insert(rhs->value);
-                // defined stays in live (Week 9 bug fix)
-            }
+            // The FOR init counts as a declaration
+            out.push_back(stmt->children[0]);
+            // Recurse into body
+            collectDeclVars(stmt->children[3]->children, out);
         }
     }
-    return live;
 }
 
 // -----------------------------------------------------------------------
@@ -63,12 +129,13 @@ vector<DatasetRow> buildSnippetRows(int                    snippetId,
     // Step 2: extract snippet-level features
     CodeFeatures feat = extractFeatures(stmts, cfg);
 
-    // Step 3: one row per declared variable
-    for (ASTNode* stmt : stmts)
-    {
-        if (stmt->type != "DECL") continue;
+    // Step 3: one row per declared variable (including FOR loop vars)
+    vector<ASTNode*> declNodes;
+    collectDeclVars(stmts, declNodes);
 
-        string varName = stmt->children[1]->value;
+    for (ASTNode* declNode : declNodes)
+    {
+        string varName = declNode->children[1]->value;
 
         DatasetRow row;
         row.snippetId        = snippetId;
@@ -80,15 +147,12 @@ vector<DatasetRow> buildSnippetRows(int                    snippetId,
         row.sideEffectCount  = feat.sideEffectCount;
         row.usageRatio       = feat.usageRatio;
 
-        // per-variable counts from feature maps
         row.varDeclCount = feat.varDeclCount.count(varName)
                                ? feat.varDeclCount.at(varName) : 0;
         row.varUseCount  = feat.varUseCount.count(varName)
                                ? feat.varUseCount.at(varName)  : 0;
 
-        // label via ground truth
         row.label = live.count(varName) ? "LIVE" : "DEAD";
-
         rows.push_back(row);
     }
 
@@ -96,7 +160,7 @@ vector<DatasetRow> buildSnippetRows(int                    snippetId,
 }
 
 // -----------------------------------------------------------------------
-// validateLabels — re-run liveness and confirm every label is consistent
+// validateLabels
 // -----------------------------------------------------------------------
 bool validateLabels(vector<DatasetRow>& rows, vector<ASTNode*> stmts)
 {
@@ -118,8 +182,8 @@ bool validateLabels(vector<DatasetRow>& rows, vector<ASTNode*> stmts)
         {
             cout << "  [MISMATCH]  " << row.variableName
                  << "  =>  labeled=" << row.label
-                 << "  expected=" << expected << "  (correcting)\n";
-            row.label = expected;   // auto-correct
+                 << "  expected="    << expected << "  (correcting)\n";
+            row.label = expected;
             allValid  = false;
         }
     }
