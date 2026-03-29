@@ -202,9 +202,24 @@ if os.path.exists("optimized_code.txt"):
     with open("optimized_code.txt") as f:
         raw_lines = [l.rstrip() for l in f.readlines() if l.strip()]
 else:
-    # Fallback: reconstruct from dataset rows that are not removed
-    for _, row in df.iterrows():
-        raw_lines.append(f"int {row['variable_name']} = 0;")
+    # Fallback: reconstruct from dataset.csv using REAL values from the source.
+    # We read the original source program and extract actual assigned values
+    # so the optimized code shows correct values, not placeholder zeros.
+    src_values = {}
+    src_path = os.path.join("examples", "sample_program.txt")
+    if os.path.exists(src_path):
+        import re as _re
+        with open(src_path) as sf:
+            for line in sf:
+                m = _re.search(r'int\s+([A-Za-z_]\w*)\s*=\s*([^;]+);', line)
+                if m:
+                    src_values[m.group(1).strip()] = m.group(2).strip()
+
+    # Only emit rows that are LIVE (classical label) so we match DCE output
+    live_vars = df[df["label"] == "LIVE"]["variable_name"].tolist()
+    for var in live_vars:
+        val = src_values.get(var, "0")   # use real value if found, else 0
+        raw_lines.append(f"int {var} = {val};")
     raw_lines.append("return 0;")
 
 # Filter raw_lines: remove only lines that declare a dead variable.

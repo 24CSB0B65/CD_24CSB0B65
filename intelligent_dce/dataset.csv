@@ -1,6 +1,4 @@
 snippet_id,variable_name,var_decl_count,var_use_count,total_statements,total_variables,cfg_depth,cfg_nodes,side_effect_count,usage_ratio,label
-1,main,1,0,6,5,4,5,0,0.6000,DEAD
-1,sum,1,1,6,5,4,5,0,0.6000,LIVE
-1,n,1,1,6,5,4,5,0,0.6000,LIVE
-1,i,1,3,6,5,4,5,0,0.6000,LIVE
-1,val,1,0,6,5,4,5,0,0.6000,DEAD
+1,a,1,1,4,3,3,4,0,0.6667,LIVE
+1,b,1,0,4,3,3,4,0,0.6667,DEAD
+1,c,1,1,4,3,3,4,0,0.6667,LIVE

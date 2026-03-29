@@ -7,8 +7,8 @@ using namespace std;
 
 set<string> live;
 
-// Single output file stream — opened once, shared across both functions
-static ofstream outFile("liveness_output.txt");
+// Single output file stream — truncated on each run so previous output is cleared
+static ofstream outFile("liveness_output.txt", ios::trunc);
 
 // ── Forward declaration ──────────────────────────────────────────────────────
 static void processLivenessBackward(vector<ASTNode*>& stmts,

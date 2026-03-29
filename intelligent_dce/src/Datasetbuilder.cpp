@@ -14,8 +14,8 @@
 // body until the live-set stabilises (models the back-edge).
 // =======================================================================
 
-#include "DatasetBuilder.h"
-#include "FeatureExtractor.h"
+#include "Datasetbuilder.h"
+#include "Featureextractor.h"
 #include <iostream>
 #include <fstream>
 #include <set>
@@ -243,7 +243,7 @@ void saveDatasetCSV(const vector<DatasetRow>& rows,
                     const string&             filename,
                     bool                      writeHeader)
 {
-    ofstream out(filename, ios::app);
+    ofstream out(filename, writeHeader ? ios::trunc : ios::app);
 
     if (writeHeader)
     {

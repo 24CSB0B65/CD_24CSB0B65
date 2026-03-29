@@ -38,6 +38,23 @@ static void parseStatements(const vector<string>& tokens, int& i, ASTNode* paren
         // ── int <var> = <val> ; ──────────────────────────────────────
         if (tokens[i] == "int")
         {
+            // ── Skip: int main() { ... } ─────────────────────────────
+            // Peek ahead: if next token is "main" followed by "(", this
+            // is the function definition wrapper — consume it entirely.
+            if (i + 1 < sz && tokens[i + 1] == "main")
+            {
+                // skip tokens until we find the matching closing '}'
+                i += 2; // skip 'int' 'main'
+                // skip '(' ')' and any tokens up to '{'
+                while (i < sz && tokens[i] != "{") i++;
+                if (i < sz) i++; // skip '{'
+                // Now parse the body of main() by recursing —
+                // all real statements inside main are what we want.
+                parseStatements(tokens, i, parent);
+                if (i < sz && tokens[i] == "}") i++; // skip closing '}'
+                continue;
+            }
+
             // Need at least: int <id> = <val> ;  (5 tokens from i)
             if (i + 4 >= sz)
             {

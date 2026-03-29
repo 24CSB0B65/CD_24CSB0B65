@@ -12,7 +12,7 @@
 // the top level.
 // =======================================================================
 
-#include "FeatureExtractor.h"
+#include "Featureextractor.h"
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -170,7 +170,7 @@ void saveFeaturesCSV(const CodeFeatures& f,
                      const string&       filename,
                      bool                writeHeader)
 {
-    ofstream out(filename, ios::app);
+    ofstream out(filename, writeHeader ? ios::trunc : ios::app);
 
     if (writeHeader)
     {

@@ -17,28 +17,28 @@ Week 13   : Integration & comparison  final_report.txt (Python)
 
 CLASSICAL DCE RESULTS (Ground Truth from C++ Pipeline)
 ----------------------------------------
-Variables removed : ['main', 'val']
-Variables kept    : ['sum', 'n', 'i']
-Removal rate      : 40.0%
+Variables removed : ['b']
+Variables kept    : ['a', 'c']
+Removal rate      : 33.3%
 
 ML + SAFETY DCE RESULTS (Python ML Pipeline)
 ----------------------------------------
-Variables removed : ['main', 'val']
-Variables kept    : ['sum', 'n', 'i']
+Variables removed : ['b']
+Variables kept    : ['a', 'c']
 Safety overrides  : 0
-Removal rate      : 40.0%
+Removal rate      : 33.3%
 
 COMPARISON METRICS
 ----------------------------------------
-True Positives  (correctly removed) : 2
-True Negatives  (correctly kept)    : 3
+True Positives  (correctly removed) : 1
+True Negatives  (correctly kept)    : 2
 False Positives (wrongly removed)   : 0   DANGEROUS (safety layer prevents these)
 False Negatives (missed dead code)  : 0
 Accuracy    : 1.0000
 Precision   : 1.0000
 Recall      : 1.0000
 F1 Score    : 1.0000
-Agreement   : 5/5 (100.0%)
+Agreement   : 3/3 (100.0%)
 
 CONCLUSION
 ----------------------------------------

@@ -1,27 +1,23 @@
 
 --- LIVENESS ANALYSIS (backward traversal) ---
-Step 4 | RETURN sum  =>  mark 'sum' as LIVE
-         live set = { sum }
-Step 3 | FOR   i  =>  loop variable and body liveness processed
-         live set = { i n sum }
-Step 2 | DECL  n = 5  =>  'n' is LIVE
-         live set = { i n sum }
-Step 1 | DECL  sum = 0  =>  'sum' is LIVE
-         live set = { i n sum }
-Step 0 | DECL  main = )  =>  'main' is DEAD (not used downstream)
-         live set = { i n sum }
+Step 3 | RETURN c  =>  mark 'c' as LIVE
+         live set = { c }
+Step 2 | DECL  c = a  =>  'c' is LIVE,  propagate: mark 'a' as LIVE
+         live set = { a c }
+Step 1 | DECL  b = 2  =>  'b' is DEAD (not used downstream)
+         live set = { a c }
+Step 0 | DECL  a = 5  =>  'a' is LIVE
+         live set = { a c }
 
-Final live set = { i n sum }
+Final live set = { a c }
 
 --- DEAD CODE ELIMINATION ---
-REMOVE  =>  int main = );  (dead: never used)
-KEEP    =>  int sum = 0;
-KEEP    =>  int n = 5;
-KEEP    =>  for (i ...)
-KEEP    =>  return sum;
+KEEP    =>  int a = 5;
+REMOVE  =>  int b = 2;  (dead: never used)
+KEEP    =>  int c = a;
+KEEP    =>  return c;
 
 --- OPTIMIZED PROGRAM ---
-int sum = 0;
-int n = 5;
-for (int i = 0; i < n; i++) { ... }
-return sum;
+int a = 5;
+int c = a;
+return c;

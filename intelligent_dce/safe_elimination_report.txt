@@ -12,24 +12,22 @@ PER-VARIABLE DECISIONS
 ----------------------------------------
 Variable     ML       Classical    UseCount   SideFx   Decision     Reason
 ----------------------------------------------------------------------------------------------------
-main         DEAD     DEAD         0          0        REMOVE       All safety checks passed: use_count=0, no side effects, classical=DEAD
-sum          LIVE     LIVE         1          0        KEEP         ML predicts LIVE
-n            LIVE     LIVE         1          0        KEEP         ML predicts LIVE
-i            LIVE     LIVE         3          0        KEEP         ML predicts LIVE
-val          DEAD     DEAD         0          0        REMOVE       All safety checks passed: use_count=0, no side effects, classical=DEAD
+a            LIVE     LIVE         1          0        KEEP         ML predicts LIVE
+b            DEAD     DEAD         0          0        REMOVE       All safety checks passed: use_count=0, no side effects, classical=DEAD
+c            LIVE     LIVE         1          0        KEEP         ML predicts LIVE
 
 SUMMARY
 ----------------------------------------
-Total variables : 5
-REMOVED         : 2
-KEPT (ML=LIVE)  : 3
+Total variables : 3
+REMOVED         : 1
+KEPT (ML=LIVE)  : 2
 SAFE OVERRIDE   : 0
 
 SAFE OPTIMIZED PROGRAM
 ----------------------------------------
 int main()
 {
-    int a = 10;
-    int d = a;
-    return d;
+    int a = 5;
+    int c = a;
+    return c;
 }

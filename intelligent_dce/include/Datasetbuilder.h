@@ -11,7 +11,7 @@
 #include <vector>
 #include <string>
 #include "ASTNode.h"
-#include "FeatureExtractor.h"
+#include "Featureextractor.h"
 
 // -----------------------------------------------------------------------
 // DatasetRow — one labeled sample (one variable in one snippet)
