@@ -1,0 +1,69 @@
+======================================================================
+INTELLIGENT DEAD CODE ELIMINATION  FINAL REPORT
+Week 13: Integration & Comparison
+======================================================================
+
+PIPELINE STAGES COMPLETED
+----------------------------------------
+Week 1-2  : Problem understanding, compiler basics
+Week 3-4  : CFG construction, reachability analysis
+Week 5-7  : Liveness analysis, classical DCE (C++)
+Week 8    : Security analysis, side-effect tagging (C++)
+Week 9    : Feature extraction  features.csv (C++)
+Week 10   : Dataset preparation  dataset.csv (C++)
+Week 11   : ML model training  model.pkl (Python)
+Week 12   : Safety validation  safe_elimination_report.txt (Python)
+Week 13   : Integration & comparison  final_report.txt (Python)
+
+CLASSICAL DCE RESULTS (Ground Truth from C++ Pipeline)
+----------------------------------------
+Variables removed : ['main', 'val']
+Variables kept    : ['sum', 'n', 'i']
+Removal rate      : 40.0%
+
+ML + SAFETY DCE RESULTS (Python ML Pipeline)
+----------------------------------------
+Variables removed : ['main', 'val']
+Variables kept    : ['sum', 'n', 'i']
+Safety overrides  : 0
+Removal rate      : 40.0%
+
+COMPARISON METRICS
+----------------------------------------
+True Positives  (correctly removed) : 2
+True Negatives  (correctly kept)    : 3
+False Positives (wrongly removed)   : 0   DANGEROUS (safety layer prevents these)
+False Negatives (missed dead code)  : 0
+Accuracy    : 1.0000
+Precision   : 1.0000
+Recall      : 1.0000
+F1 Score    : 1.0000
+Agreement   : 5/5 (100.0%)
+
+CONCLUSION
+----------------------------------------
+The Intelligent DCE system successfully combines:
+  1. Classical liveness analysis (C++) for ground truth labeling
+  2. ML-based prediction (Decision Tree) for intelligent pattern detection
+  3. Three-layer safety validation to ensure zero false removals
+
+The safety layer guarantees: if FP > 0 in raw ML output,
+all false positives are caught and overridden before code removal.
+This makes the system suitable for real compiler integration.
+
+OUTPUT FILES GENERATED ACROSS ALL WEEKS
+----------------------------------------
+  liveness_output.txt              [Week 7-8]  C++ liveness trace and DCE log
+  optimized_code.txt               [Week 7]  Classical DCE optimized program
+  features.csv                     [Week 9]  Extracted ML features
+  dataset.csv                      [Week 10]  Labeled training dataset
+  model.pkl                        [Week 11]  Trained Decision Tree classifier
+  ml_report.txt                    [Week 11]  Model accuracy/precision/recall report
+  safe_elimination_report.txt      [Week 12]  Safety validation decisions
+  safe_optimized_code.txt          [Week 12]  Safety-validated optimized program
+  comparison_chart.png             [Week 13]  Visual comparison bar chart
+  final_report.txt                 [Week 13]  This report  complete pipeline summary
+
+======================================================================
+Project Complete  13 Weeks of Intelligent DCE
+======================================================================

@@ -1,0 +1,35 @@
+============================================================
+WEEK 12: SAFETY VALIDATION REPORT
+============================================================
+
+THREE SAFETY CHECKS APPLIED
+----------------------------------------
+CHECK 1: Side-Effect Guard   — if side_effect_count > 0: KEEP
+CHECK 2: Use-Count Guard     — if var_use_count > 0: KEEP
+CHECK 3: Classical Cross-Check — if classical=LIVE but ML=DEAD: KEEP
+
+PER-VARIABLE DECISIONS
+----------------------------------------
+Variable     ML       Classical    UseCount   SideFx   Decision     Reason
+----------------------------------------------------------------------------------------------------
+main         DEAD     DEAD         0          0        REMOVE       All safety checks passed: use_count=0, no side effects, classical=DEAD
+sum          LIVE     LIVE         1          0        KEEP         ML predicts LIVE
+n            LIVE     LIVE         1          0        KEEP         ML predicts LIVE
+i            LIVE     LIVE         3          0        KEEP         ML predicts LIVE
+val          DEAD     DEAD         0          0        REMOVE       All safety checks passed: use_count=0, no side effects, classical=DEAD
+
+SUMMARY
+----------------------------------------
+Total variables : 5
+REMOVED         : 2
+KEPT (ML=LIVE)  : 3
+SAFE OVERRIDE   : 0
+
+SAFE OPTIMIZED PROGRAM
+----------------------------------------
+int main()
+{
+    int a = 10;
+    int d = a;
+    return d;
+}

@@ -1,0 +1,8 @@
+--- SAFE OPTIMIZED PROGRAM (Week 12 Safety Validation) ---
+
+int main()
+{
+    int a = 10;
+    int d = a;
+    return d;
+}

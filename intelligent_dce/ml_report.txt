@@ -1,0 +1,55 @@
+============================================================
+WEEK 11: ML MODEL EVALUATION REPORT
+============================================================
+
+DATASET SUMMARY
+----------------------------------------
+Total samples : 5
+LIVE samples  : 3
+DEAD samples  : 2
+
+DECISION TREE METRICS (training set)
+----------------------------------------
+Accuracy  : 1.0000
+Precision : 1.0000
+Recall    : 1.0000
+F1 Score  : 1.0000
+
+NAIVE BAYES METRICS (training set)
+----------------------------------------
+Accuracy  : 1.0000
+Precision : 1.0000
+Recall    : 1.0000
+F1 Score  : 1.0000
+
+LOO-CV ACCURACY
+----------------------------------------
+Decision Tree : 1.0000
+Naive Bayes   : 1.0000
+
+DECISION TREE RULES
+----------------------------------------
+|--- var_use_count <= 0.50
+|   |--- class: DEAD
+|--- var_use_count >  0.50
+|   |--- class: LIVE
+
+CLASSIFICATION REPORT (Decision Tree)
+----------------------------------------
+              precision    recall  f1-score   support
+
+        DEAD       1.00      1.00      1.00         2
+        LIVE       1.00      1.00      1.00         3
+
+    accuracy                           1.00         5
+   macro avg       1.00      1.00      1.00         5
+weighted avg       1.00      1.00      1.00         5
+
+PER-VARIABLE PREDICTIONS
+----------------------------------------
+Variable     True     DT Pred    GNB Pred   Correct?
+main         DEAD     DEAD       DEAD       YES
+sum          LIVE     LIVE       LIVE       YES
+n            LIVE     LIVE       LIVE       YES
+i            LIVE     LIVE       LIVE       YES
+val          DEAD     DEAD       DEAD       YES
